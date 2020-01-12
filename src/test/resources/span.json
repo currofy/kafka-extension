@@ -1,0 +1,41 @@
+[
+  {
+    "traceId": "d566efbd4dc4a74f",
+    "parentId": "d566efbd4dc4a74f",
+    "id": "29bb7cc508e092eb",
+    "kind": "CLIENT",
+    "name": "get",
+    "timestamp": 1578659567048481,
+    "duration": 208764,
+    "localEndpoint": {
+      "serviceName": "zipkin-sample",
+      "ipv4": "172.19.0.1"
+    },
+    "tags": {
+      "http.method": "GET",
+      "http.path": "/city/London"
+    }
+  },
+  {
+    "traceId": "d566efbd4dc4a74f",
+    "id": "d566efbd4dc4a74f",
+    "kind": "SERVER",
+    "name": "get /weather/city/{city}",
+    "timestamp": 1578659567019308,
+    "duration": 369236,
+    "localEndpoint": {
+      "serviceName": "zipkin-sample",
+      "ipv4": "172.19.0.1"
+    },
+    "remoteEndpoint": {
+      "ipv4": "127.0.0.1",
+      "port": 56226
+    },
+    "tags": {
+      "http.method": "GET",
+      "http.path": "/weather/city/London",
+      "mvc.controller.class": "GatheringSpanController",
+      "mvc.controller.method": "gatherMetric"
+    }
+  }
+]
