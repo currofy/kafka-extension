@@ -5,23 +5,23 @@ import lombok.SneakyThrows;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import zipkin2.Span;
+import zipkin2.SpanBytesDecoderDetector;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-public class OpenTracingDeserializer implements Deserializer<Trace> {
+public class OpentracingDeserializer implements Deserializer<Trace> {
 
     private final StringDeserializer stringDeserializer;
 
     private final ObjectMapper objectMapper;
 
-    public OpenTracingDeserializer() {
+    public OpentracingDeserializer() {
         this(new ObjectMapper());
     }
 
-    public OpenTracingDeserializer(final ObjectMapper objectMapper) {
+    public OpentracingDeserializer(final ObjectMapper objectMapper) {
         this.stringDeserializer = new StringDeserializer();
         this.objectMapper = objectMapper;
     }
@@ -34,12 +34,7 @@ public class OpenTracingDeserializer implements Deserializer<Trace> {
     @Override
     @SneakyThrows
     public Trace deserialize(String topic, byte[] data) {
-        Map<String, Object>[] spanArray =
-                objectMapper.readValue(stringDeserializer.deserialize(topic, data), Map[].class);
-
-        List<Span> spanList = Stream.of(spanArray)
-                .map(this::extractSpanFromMap)
-                .collect(Collectors.toList());
+        List<Span> spanList = decodeSpans(data);
         List<String> traceIds = spanList.stream().map(Span::traceId).distinct().collect(Collectors.toList());
         if (traceIds.size() != 1) {
             throw new RuntimeException("Only an unique traceId is allowed in a trace");
@@ -47,12 +42,8 @@ public class OpenTracingDeserializer implements Deserializer<Trace> {
         return Trace.builder().spans(spanList).traceId(traceIds.get(0)).build();
     }
 
-    private Span extractSpanFromMap(final Map<String, Object> spanMap) {
-        return Span.newBuilder()
-                .traceId(String.valueOf(spanMap.get("traceId")))
-                .id(String.valueOf(spanMap.get("id")))
-                .kind(Span.Kind.valueOf(String.valueOf(spanMap.get("kind"))))
-                .build();
+    private List<Span> decodeSpans(final byte[] data) {
+        return SpanBytesDecoderDetector.decoderForListMessage(data).decodeList(data);
     }
 
     @Override

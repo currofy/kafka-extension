@@ -17,4 +17,5 @@ public class Trace {
     private String traceId;
 
     private List<Span> spans;
+
 }

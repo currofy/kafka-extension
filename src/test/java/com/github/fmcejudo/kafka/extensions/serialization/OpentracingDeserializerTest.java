@@ -11,19 +11,19 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class OpenTracingDeserializerTest {
+class OpentracingDeserializerTest {
 
     private final String sampleTopic = "mytopic";
 
     ClassLoader classLoader;
 
-    OpenTracingDeserializer openTracingDeserializer;
+    OpentracingDeserializer openTracingDeserializer;
 
 
     @BeforeEach
     void setUp() {
         this.classLoader = getClass().getClassLoader();
-        this.openTracingDeserializer = new OpenTracingDeserializer();
+        this.openTracingDeserializer = new OpentracingDeserializer();
     }
 
     @Test
