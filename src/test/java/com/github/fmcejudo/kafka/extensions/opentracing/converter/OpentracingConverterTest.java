@@ -1,6 +1,6 @@
-package com.github.fmcejudo.kafka.extensions.converter;
+package com.github.fmcejudo.kafka.extensions.opentracing.converter;
 
-import com.github.fmcejudo.kafka.extensions.serialization.Trace;
+import com.github.fmcejudo.kafka.extensions.opentracing.Trace;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,9 +11,7 @@ import zipkin2.Span;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
-import java.util.Map;
 import java.util.Optional;
 
 import static java.util.Collections.singletonMap;

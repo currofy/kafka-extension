@@ -1,5 +1,7 @@
-package com.github.fmcejudo.kafka.extensions.serialization;
+package com.github.fmcejudo.kafka.extensions.opentracing.serialization;
 
+import com.github.fmcejudo.kafka.extensions.opentracing.serialization.OpentracingSerializer;
+import com.github.fmcejudo.kafka.extensions.opentracing.Trace;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import zipkin2.Span;

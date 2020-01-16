@@ -1,0 +1,19 @@
+= KAFKA-EXTENSION
+
+== WHAT IS THIS PROJECT ABOUT
+
+This is a dependency which provides some functionality to read `Span` list from `Zipkin` as `Opentracing`
+implementation which come from messages of `Kafka` topics, serializing and deserializing the content
+which allows us to make an abstraction from common work across the requirement of this feature in your project.
+
+
+== WHY THIS NEW DEPENDENCY
+
+Working in observability feature in conjunction with `Spring Boot` project, which comes with `micrometer` as metrics
+provider which lets push them into a kafka topic to be consumed by tools to monitor the traffic with the `Opentracing`
+standard, such as `Zipkin`, `Jaeger`, `OpenCensus`, etc. But they can also be observed by other some other custom tools.
+
+Reading this metrics, we might find spans which alert us from dysfunction in the services or the network.
+
+== HOW TO USE IT
+

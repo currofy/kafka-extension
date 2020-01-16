@@ -1,6 +1,7 @@
-package com.github.fmcejudo.kafka.extensions.serialization;
+package com.github.fmcejudo.kafka.extensions.opentracing.serialization;
 
 
+import com.github.fmcejudo.kafka.extensions.opentracing.Trace;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;

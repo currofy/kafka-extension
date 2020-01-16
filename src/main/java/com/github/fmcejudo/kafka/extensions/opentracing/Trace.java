@@ -1,4 +1,4 @@
-package com.github.fmcejudo.kafka.extensions.serialization;
+package com.github.fmcejudo.kafka.extensions.opentracing;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,8 +1,8 @@
-package com.github.fmcejudo.kafka.extensions.converter;
+package com.github.fmcejudo.kafka.extensions.opentracing.converter;
 
-import com.github.fmcejudo.kafka.extensions.serialization.OpentracingDeserializer;
-import com.github.fmcejudo.kafka.extensions.serialization.OpentracingSerializer;
-import com.github.fmcejudo.kafka.extensions.serialization.Trace;
+import com.github.fmcejudo.kafka.extensions.opentracing.Trace;
+import com.github.fmcejudo.kafka.extensions.opentracing.serialization.OpentracingDeserializer;
+import com.github.fmcejudo.kafka.extensions.opentracing.serialization.OpentracingSerializer;
 import org.springframework.lang.Nullable;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHeaders;

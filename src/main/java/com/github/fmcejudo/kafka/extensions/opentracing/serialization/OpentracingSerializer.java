@@ -1,7 +1,8 @@
-package com.github.fmcejudo.kafka.extensions.serialization;
+package com.github.fmcejudo.kafka.extensions.opentracing.serialization;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fmcejudo.kafka.extensions.opentracing.Trace;
 import lombok.SneakyThrows;
 import org.apache.kafka.common.serialization.Serializer;
 import org.apache.kafka.common.serialization.StringSerializer;
