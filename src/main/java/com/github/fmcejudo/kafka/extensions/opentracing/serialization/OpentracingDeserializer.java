@@ -1,6 +1,5 @@
 package com.github.fmcejudo.kafka.extensions.opentracing.serialization;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fmcejudo.kafka.extensions.opentracing.Trace;
 import lombok.SneakyThrows;
 import org.apache.kafka.common.serialization.Deserializer;
@@ -16,15 +15,8 @@ public class OpentracingDeserializer implements Deserializer<Trace> {
 
     private final StringDeserializer stringDeserializer;
 
-    private final ObjectMapper objectMapper;
-
     public OpentracingDeserializer() {
-        this(new ObjectMapper());
-    }
-
-    public OpentracingDeserializer(final ObjectMapper objectMapper) {
         this.stringDeserializer = new StringDeserializer();
-        this.objectMapper = objectMapper;
     }
 
     @Override

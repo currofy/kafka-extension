@@ -12,6 +12,7 @@ import zipkin2.Span;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static java.util.Collections.singletonMap;
@@ -80,11 +81,13 @@ class OpentracingConverterTest {
 
         //Then
         assertThat(o).isInstanceOf(Trace.class);
-        /*String traceSerialized = new String((byte[]) o, StandardCharsets.UTF_8);
-        assertThat(traceSerialized).contains("traceId").contains(traceId);*/
     }
 
 
     static class CustomTrace extends Trace {
+
+        public CustomTrace(String traceId, List<Span> spans) {
+            super(traceId, spans);
+        }
     }
 }

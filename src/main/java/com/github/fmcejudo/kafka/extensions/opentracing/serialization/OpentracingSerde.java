@@ -1,6 +1,5 @@
 package com.github.fmcejudo.kafka.extensions.opentracing.serialization;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fmcejudo.kafka.extensions.opentracing.Trace;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serde;
@@ -12,12 +11,15 @@ public class OpentracingSerde implements Serde<Trace> {
 
     private final OpentracingSerializer opentracingSerializer;
     private final OpentracingDeserializer opentracingDeserializer;
-    private final ObjectMapper objectMapper;
 
     public OpentracingSerde() {
-        this.objectMapper = new ObjectMapper();
-        this.opentracingDeserializer = new OpentracingDeserializer(objectMapper);
-        this.opentracingSerializer = new OpentracingSerializer(objectMapper);
+        this(new OpentracingSerializer(), new OpentracingDeserializer());
+    }
+
+    public OpentracingSerde(final OpentracingSerializer opentracingSerializer,
+                            final OpentracingDeserializer opentracingDeserializer) {
+        this.opentracingSerializer = opentracingSerializer;
+        this.opentracingDeserializer = opentracingDeserializer;
     }
 
     @Override

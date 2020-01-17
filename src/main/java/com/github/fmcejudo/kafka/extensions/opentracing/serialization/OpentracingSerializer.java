@@ -1,7 +1,6 @@
 package com.github.fmcejudo.kafka.extensions.opentracing.serialization;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fmcejudo.kafka.extensions.opentracing.Trace;
 import lombok.SneakyThrows;
 import org.apache.kafka.common.serialization.Serializer;
@@ -12,21 +11,13 @@ import java.util.Map;
 
 public class OpentracingSerializer implements Serializer<Trace> {
 
-
     //TODO(cejudogomezf) This should find a configuration property which select the type of encoder:
     // JSON_V1, JSON_V2,PROTO3, THRIFT
 
     private final StringSerializer stringSerializer;
 
-    private final ObjectMapper objectMapper;
-
     public OpentracingSerializer() {
-        this(new ObjectMapper());
-    }
-
-    public OpentracingSerializer(final ObjectMapper objectMapper) {
         this.stringSerializer = new StringSerializer();
-        this.objectMapper = objectMapper;
     }
 
     @Override
