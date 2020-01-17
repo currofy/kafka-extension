@@ -1,0 +1,26 @@
+[
+  {
+    "traceId": "46876d22cf0f94e0",
+    "parentId": "46876d22cf0f94e0",
+    "id": "b8d201046fe8a637",
+    "kind": "SERVER",
+    "name": "get /city/{city}",
+    "timestamp": 1579277594170584,
+    "duration": 83439,
+    "localEndpoint": {
+      "serviceName": "zipkin-weather-service",
+      "ipv4": "172.21.0.1"
+    },
+    "remoteEndpoint": {
+      "ipv4": "127.0.0.1",
+      "port": 51944
+    },
+    "tags": {
+      "http.method": "GET",
+      "http.path": "/city/Madrid",
+      "mvc.controller.class": "WeatherController",
+      "mvc.controller.method": "getWeatherAtCity"
+    },
+    "shared": true
+  }
+]

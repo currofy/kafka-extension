@@ -31,7 +31,7 @@ class OpentracingDeserializerTest {
     @SneakyThrows
     void shouldDeserializeAOpenTracingStringIntoASpan() {
         //Given
-        InputStream inputStream = Optional.ofNullable(classLoader.getResourceAsStream("span.json"))
+        InputStream inputStream = Optional.ofNullable(classLoader.getResourceAsStream("span-zipkin-sample.json"))
                 .orElseThrow(() -> new RuntimeException("It could not read resource to load span"));
 
         byte[] spanBytes = IOUtils.toByteArray(inputStream);
@@ -40,7 +40,7 @@ class OpentracingDeserializerTest {
         Trace trace = openTracingDeserializer.deserialize(sampleTopic, spanBytes);
 
         //Then
-        assertThat(trace.getTraceId()).isNotNull().isEqualTo("d566efbd4dc4a74f");
+        assertThat(trace.getTraceId()).isNotNull().isEqualTo("46876d22cf0f94e0");
         assertThat(trace.getSpans()).isNotNull().hasSize(2);
     }
 }

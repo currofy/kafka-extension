@@ -1,41 +1,42 @@
 [
   {
-    "traceId": "d566efbd4dc4a74f",
-    "parentId": "d566efbd4dc4a74f",
-    "id": "29bb7cc508e092eb",
+    "traceId": "46876d22cf0f94e0",
+    "parentId": "46876d22cf0f94e0",
+    "id": "b8d201046fe8a637",
     "kind": "CLIENT",
     "name": "get",
-    "timestamp": 1578659567048481,
-    "duration": 208764,
+    "timestamp": 1579277594098067,
+    "duration": 157486,
     "localEndpoint": {
       "serviceName": "zipkin-sample",
-      "ipv4": "172.19.0.1"
+      "ipv4": "172.21.0.1"
     },
     "tags": {
       "http.method": "GET",
-      "http.path": "/city/London"
+      "http.path": "/city/Madrid"
     }
   },
   {
-    "traceId": "d566efbd4dc4a74f",
-    "id": "d566efbd4dc4a74f",
+    "traceId": "46876d22cf0f94e0",
+    "id": "46876d22cf0f94e0",
     "kind": "SERVER",
     "name": "get /weather/city/{city}",
-    "timestamp": 1578659567019308,
-    "duration": 369236,
+    "timestamp": 1579277594071018,
+    "duration": 256559,
     "localEndpoint": {
       "serviceName": "zipkin-sample",
-      "ipv4": "172.19.0.1"
+      "ipv4": "172.21.0.1"
     },
     "remoteEndpoint": {
       "ipv4": "127.0.0.1",
-      "port": 56226
+      "port": 56614
     },
     "tags": {
       "http.method": "GET",
-      "http.path": "/weather/city/London",
+      "http.path": "/weather/city/Madrid",
       "mvc.controller.class": "GatheringSpanController",
       "mvc.controller.method": "gatherMetric"
     }
   }
 ]
+

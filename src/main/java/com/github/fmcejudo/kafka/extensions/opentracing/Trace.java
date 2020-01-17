@@ -1,43 +1,51 @@
 package com.github.fmcejudo.kafka.extensions.opentracing;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import zipkin2.Span;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
-@AllArgsConstructor
-@Builder
 public class Trace {
 
     private final String traceId;
 
     private final List<Span> spans;
 
+    private Trace(final String traceId, final List<Span> spans) {
+        this.traceId = traceId;
+        this.spans = Collections.unmodifiableList(spans);
+    }
+
+    public static Trace from(final List<Span> spans) {
+        SpanListValidator.assertSameServiceName(spans);
+        return new Trace(SpanTraceIdExtractor.traceId(spans), spans);
+    }
+
     public boolean containsRoot() {
         return spans.stream().anyMatch(s -> s.parentId() == null || s.parentId().trim().length() == 0);
     }
 
-    public List<Span> serverSpans() {
-        return spans.stream()
-                .filter(s -> s.kind().equals(Span.Kind.SERVER))
-                .collect(Collectors.toList());
+    private static class SpanListValidator {
+
+        private static void assertSameServiceName(final List<Span> spans) {
+            String serviceName = spans.get(0).localServiceName();
+            if (!spans.stream().map(Span::localServiceName).allMatch(sn -> sn.equals(serviceName))) {
+                throw new RuntimeException("All the spans should have the same service name");
+            }
+        }
     }
 
-    public long duration() {
-        return serverSpans().stream()
-                .map(Span::duration).reduce(Long::sum)
-                .orElseThrow(() -> new RuntimeException("No SERVER spans found, but required"));
-    }
+    public static class SpanTraceIdExtractor {
 
-    public List<String> serviceNames() {
-        return serverSpans().stream()
-                .map(Span::localServiceName)
-                .collect(Collectors.toList());
+        private static String traceId(final List<Span> spans) {
+            String traceId = spans.get(0).traceId();
+            if (spans.stream().anyMatch(s -> !s.traceId().equals(traceId))) {
+                throw new RuntimeException("All spans should have the same trace id: " + traceId);
+            }
+            return traceId;
+        }
     }
 
 }

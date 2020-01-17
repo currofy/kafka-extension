@@ -7,17 +7,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.support.MessageBuilder;
+import zipkin2.Endpoint;
 import zipkin2.Span;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.springframework.messaging.MessageHeaders.CONTENT_TYPE;
 
 class OpentracingConverterTest {
@@ -37,13 +36,12 @@ class OpentracingConverterTest {
 
         assertThat(opentracingConverter.supports(String.class)).isFalse();
         assertThat(opentracingConverter.supports(Trace.class)).isTrue();
-        assertThat(opentracingConverter.supports(CustomTrace.class)).isFalse();
     }
 
     @Test
     void shouldConvertIntoTrace() throws IOException {
         //Given
-        InputStream inputStream = Optional.ofNullable(classLoader.getResourceAsStream("span.json"))
+        InputStream inputStream = Optional.ofNullable(classLoader.getResourceAsStream("span-zipkin-sample.json"))
                 .orElseThrow(() -> new RuntimeException("It could not read resource to load span"));
 
         byte[] spanBytes = IOUtils.toByteArray(inputStream);
@@ -56,7 +54,7 @@ class OpentracingConverterTest {
         assertThat(trace).isInstanceOf(Trace.class);
         assertThat((Trace) trace)
                 .isNotNull()
-                .extracting("traceId").isEqualTo("d566efbd4dc4a74f");
+                .extracting("traceId").isEqualTo("46876d22cf0f94e0");
         assertThat(((Trace) trace).getSpans()).hasSize(2);
     }
 
@@ -70,11 +68,12 @@ class OpentracingConverterTest {
                 .traceId(traceId)
                 .id(spanId)
                 .kind(Span.Kind.SERVER)
+                .localEndpoint(Endpoint.newBuilder().serviceName("serviceA").build())
                 .duration(4583L)
                 .name("my_service").build();
         //When
         Object o = opentracingConverter.convertToInternal(
-                Trace.builder().traceId(traceId).spans(Collections.singletonList(span)).build(),
+                Trace.from(Collections.singletonList(span)),
                 new MessageHeaders(singletonMap(CONTENT_TYPE, "application/opentracing")),
                 null
         );
@@ -83,11 +82,4 @@ class OpentracingConverterTest {
         assertThat(o).isInstanceOf(Trace.class);
     }
 
-
-    static class CustomTrace extends Trace {
-
-        public CustomTrace(String traceId, List<Span> spans) {
-            super(traceId, spans);
-        }
-    }
 }

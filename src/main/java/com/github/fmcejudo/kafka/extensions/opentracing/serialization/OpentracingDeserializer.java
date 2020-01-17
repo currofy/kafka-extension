@@ -28,11 +28,7 @@ public class OpentracingDeserializer implements Deserializer<Trace> {
     @SneakyThrows
     public Trace deserialize(String topic, byte[] data) {
         List<Span> spanList = decodeSpans(data);
-        List<String> traceIds = spanList.stream().map(Span::traceId).distinct().collect(Collectors.toList());
-        if (traceIds.size() != 1) {
-            throw new RuntimeException("Only an unique traceId is allowed in a trace");
-        }
-        return Trace.builder().spans(spanList).traceId(traceIds.get(0)).build();
+        return Trace.from(spanList);
     }
 
     private List<Span> decodeSpans(final byte[] data) {
