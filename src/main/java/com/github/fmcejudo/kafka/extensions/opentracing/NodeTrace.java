@@ -7,20 +7,20 @@ import java.util.Collections;
 import java.util.List;
 
 @Data
-public class Trace {
+public class NodeTrace {
 
     private final String traceId;
 
     private final List<Span> spans;
 
-    private Trace(final String traceId, final List<Span> spans) {
+    private NodeTrace(final String traceId, final List<Span> spans) {
         this.traceId = traceId;
         this.spans = Collections.unmodifiableList(spans);
     }
 
-    public static Trace from(final List<Span> spans) {
+    public static NodeTrace from(final List<Span> spans) {
         SpanListValidator.assertSameServiceName(spans);
-        return new Trace(SpanTraceIdExtractor.traceId(spans), spans);
+        return new NodeTrace(SpanTraceIdExtractor.traceId(spans), spans);
     }
 
     public boolean containsRoot() {

@@ -10,8 +10,9 @@ import java.io.InputStream;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static zipkin2.Span.Kind.SERVER;
 
-class AggregatedTraceTest {
+class AggregatedNodeTraceTest {
 
     OpentracingDeserializer opentracingDeserializer;
 
@@ -26,26 +27,42 @@ class AggregatedTraceTest {
     @Test
     void shouldMergeTwoTracesFromSameRequest() {
         //Given
-        Trace sampleZipkin = readTraceFromFile("span-zipkin-sample.json");
-        Trace sampleWeather = readTraceFromFile("span-zipkin-weather-sample.json");
+        NodeTrace sampleZipkin = readTraceFromFile("span-zipkin-sample.json");
+        NodeTrace sampleWeather = readTraceFromFile("span-zipkin-weather-sample.json");
 
         //When
-        AggregatedTrace aggregatedTrace = AggregatedTrace.withInitial(sampleZipkin, Trace::getTraceId);
+        AggregatedTrace aggregatedTrace = AggregatedTrace.withInitial(sampleZipkin, NodeTrace::getTraceId);
 
         //Then
         assertThat(aggregatedTrace.getKey()).isEqualTo("46876d22cf0f94e0");
         assertThat(aggregatedTrace.spans()).hasSize(2);
 
         //When
-        aggregatedTrace.add(sampleWeather);
+        aggregatedTrace.include(sampleWeather);
 
         //Then
         assertThat(aggregatedTrace.getKey()).isEqualTo("46876d22cf0f94e0");
         assertThat(aggregatedTrace.spans()).hasSize(3);
 
+        assertThat(aggregatedTrace.root()).isPresent().get()
+                .extracting("traceId", "id", "kind")
+                .containsExactly("46876d22cf0f94e0", "46876d22cf0f94e0", SERVER);
+
     }
 
-    Trace readTraceFromFile(final String fileName) {
+
+    @Test
+    void shouldLinkSpans() {
+        //Given
+        NodeTrace sampleZipkin = readTraceFromFile("span-zipkin-sample.json");
+        NodeTrace sampleWeather = readTraceFromFile("span-zipkin-weather-sample.json");
+
+        AggregatedTrace aggregatedTrace = AggregatedTrace.withInitial(sampleZipkin, NodeTrace::getTraceId);
+        aggregatedTrace.include(sampleWeather);
+
+    }
+
+    NodeTrace readTraceFromFile(final String fileName) {
         InputStream inputStream = Optional.ofNullable(classLoader.getResourceAsStream(fileName))
                 .orElseThrow(() -> new RuntimeException("It could not read resource to load span"));
         try {

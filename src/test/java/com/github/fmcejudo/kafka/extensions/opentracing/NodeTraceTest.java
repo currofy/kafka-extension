@@ -11,7 +11,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class TraceTest {
+class NodeTraceTest {
 
     private ClassLoader classLoader;
     private OpentracingDeserializer opentracingDeserializer;
@@ -31,10 +31,10 @@ class TraceTest {
         byte[] spanBytes = IOUtils.toByteArray(inputStream);
 
         //When
-        Trace trace = opentracingDeserializer.deserialize(null, spanBytes);
+        NodeTrace nodeTrace = opentracingDeserializer.deserialize(null, spanBytes);
 
         //Then
-        assertThat(trace.containsRoot()).isTrue();
+        assertThat(nodeTrace.containsRoot()).isTrue();
 
     }
 

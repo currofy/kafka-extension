@@ -1,6 +1,6 @@
 package com.github.fmcejudo.kafka.extensions.opentracing.converter;
 
-import com.github.fmcejudo.kafka.extensions.opentracing.Trace;
+import com.github.fmcejudo.kafka.extensions.opentracing.NodeTrace;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,7 +35,7 @@ class OpentracingConverterTest {
     void shouldSupportOnlyTraces() {
 
         assertThat(opentracingConverter.supports(String.class)).isFalse();
-        assertThat(opentracingConverter.supports(Trace.class)).isTrue();
+        assertThat(opentracingConverter.supports(NodeTrace.class)).isTrue();
     }
 
     @Test
@@ -48,14 +48,14 @@ class OpentracingConverterTest {
         Message<?> message = MessageBuilder.createMessage(spanBytes, new MessageHeaders(Collections.emptyMap()));
 
         //When
-        Object trace = opentracingConverter.convertFromInternal(message, Trace.class, null);
+        Object trace = opentracingConverter.convertFromInternal(message, NodeTrace.class, null);
 
         //Then
-        assertThat(trace).isInstanceOf(Trace.class);
-        assertThat((Trace) trace)
+        assertThat(trace).isInstanceOf(NodeTrace.class);
+        assertThat((NodeTrace) trace)
                 .isNotNull()
                 .extracting("traceId").isEqualTo("46876d22cf0f94e0");
-        assertThat(((Trace) trace).getSpans()).hasSize(2);
+        assertThat(((NodeTrace) trace).getSpans()).hasSize(2);
     }
 
     @Test
@@ -73,13 +73,13 @@ class OpentracingConverterTest {
                 .name("my_service").build();
         //When
         Object o = opentracingConverter.convertToInternal(
-                Trace.from(Collections.singletonList(span)),
+                NodeTrace.from(Collections.singletonList(span)),
                 new MessageHeaders(singletonMap(CONTENT_TYPE, "application/opentracing")),
                 null
         );
 
         //Then
-        assertThat(o).isInstanceOf(Trace.class);
+        assertThat(o).isInstanceOf(NodeTrace.class);
     }
 
 }

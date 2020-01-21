@@ -1,7 +1,7 @@
 package com.github.fmcejudo.kafka.extensions.opentracing.serialization;
 
 
-import com.github.fmcejudo.kafka.extensions.opentracing.Trace;
+import com.github.fmcejudo.kafka.extensions.opentracing.NodeTrace;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,10 +37,10 @@ class OpentracingDeserializerTest {
         byte[] spanBytes = IOUtils.toByteArray(inputStream);
 
         //When
-        Trace trace = openTracingDeserializer.deserialize(sampleTopic, spanBytes);
+        NodeTrace nodeTrace = openTracingDeserializer.deserialize(sampleTopic, spanBytes);
 
         //Then
-        assertThat(trace.getTraceId()).isNotNull().isEqualTo("46876d22cf0f94e0");
-        assertThat(trace.getSpans()).isNotNull().hasSize(2);
+        assertThat(nodeTrace.getTraceId()).isNotNull().isEqualTo("46876d22cf0f94e0");
+        assertThat(nodeTrace.getSpans()).isNotNull().hasSize(2);
     }
 }

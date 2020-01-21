@@ -1,6 +1,6 @@
 package com.github.fmcejudo.kafka.extensions.opentracing.serialization;
 
-import com.github.fmcejudo.kafka.extensions.opentracing.Trace;
+import com.github.fmcejudo.kafka.extensions.opentracing.NodeTrace;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import zipkin2.Endpoint;
@@ -35,10 +35,10 @@ class OpenTracingSerializerTest {
                 .localEndpoint(Endpoint.newBuilder().serviceName("serviceA").build())
                 .duration(4583L)
                 .name("my_service").build();
-        Trace trace = Trace.from(Collections.singletonList(span));
+        NodeTrace nodeTrace = NodeTrace.from(Collections.singletonList(span));
 
         //When
-        byte[] json2ZipkinSpan = opentracingSerializer.serialize(topic, trace);
+        byte[] json2ZipkinSpan = opentracingSerializer.serialize(topic, nodeTrace);
 
         //Then
         assertThat(new String(json2ZipkinSpan))

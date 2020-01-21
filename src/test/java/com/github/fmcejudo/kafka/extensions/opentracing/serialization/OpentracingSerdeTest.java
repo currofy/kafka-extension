@@ -1,13 +1,12 @@
 package com.github.fmcejudo.kafka.extensions.opentracing.serialization;
 
-import com.github.fmcejudo.kafka.extensions.opentracing.Trace;
+import com.github.fmcejudo.kafka.extensions.opentracing.NodeTrace;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serializer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
@@ -42,7 +41,7 @@ class OpentracingSerdeTest {
         OpentracingSerde specificOpentracingSerde = new OpentracingSerde();
 
         // When
-        Serializer<Trace> serializer = specificOpentracingSerde.serializer();
+        Serializer<NodeTrace> serializer = specificOpentracingSerde.serializer();
 
         //Then
         assertThat(serializer).isInstanceOf(OpentracingSerializer.class);
@@ -54,7 +53,7 @@ class OpentracingSerdeTest {
         OpentracingSerde specificOpentracingSerde = new OpentracingSerde();
 
         // When
-        Deserializer<Trace> deserializer = specificOpentracingSerde.deserializer();
+        Deserializer<NodeTrace> deserializer = specificOpentracingSerde.deserializer();
 
         //Then
         assertThat(deserializer).isInstanceOf(OpentracingDeserializer.class);

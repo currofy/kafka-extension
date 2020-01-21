@@ -1,6 +1,6 @@
 package com.github.fmcejudo.kafka.extensions.opentracing.converter;
 
-import com.github.fmcejudo.kafka.extensions.opentracing.Trace;
+import com.github.fmcejudo.kafka.extensions.opentracing.NodeTrace;
 import com.github.fmcejudo.kafka.extensions.opentracing.serialization.OpentracingDeserializer;
 import com.github.fmcejudo.kafka.extensions.opentracing.serialization.OpentracingSerializer;
 import org.springframework.lang.Nullable;
@@ -24,12 +24,12 @@ public class OpentracingConverter extends AbstractMessageConverter {
 
     @Override
     protected boolean supports(Class<?> aClass) {
-        return aClass == Trace.class;
+        return aClass == NodeTrace.class;
     }
 
     @Override
     protected Object convertFromInternal(Message<?> message, Class<?> targetClass, @Nullable Object conversionHint) {
-        if (targetClass != Trace.class) {
+        if (targetClass != NodeTrace.class) {
             return null;
         }
         byte[] data = (byte[]) message.getPayload();
@@ -45,7 +45,7 @@ public class OpentracingConverter extends AbstractMessageConverter {
                 headers.get(MessageHeaders.CONTENT_TYPE).equals("application/opentracing"),
                 "application/opentracing contentType header is required"
         );
-        if (payload instanceof Trace) {
+        if (payload instanceof NodeTrace) {
             return payload;
         }
         return null;
