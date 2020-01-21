@@ -58,7 +58,7 @@ public class NodeTraceGenerator {
     }
 
 
-    private Span generateRootSpan(final String serviceName) {
+    public Span generateRootSpan(final String serviceName) {
         Regex idPattern = mockNeat.regex("[0-9a-f]{16}");
         return generateServerSpan(idPattern.val(), null, serviceName);
     }

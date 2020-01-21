@@ -1,15 +1,17 @@
 package com.github.fmcejudo.kafka.extensions.opentracing;
 
+import com.github.fmcejudo.kafka.extensions.group.LinkedSpan;
+import com.github.fmcejudo.kafka.extensions.group.LinkedSpanList;
 import com.github.fmcejudo.kafka.extensions.opentracing.test.NodeTraceGenerator;
 import org.junit.jupiter.api.Test;
 import zipkin2.Endpoint;
 import zipkin2.Span;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class TraceStreamTest {
@@ -19,13 +21,15 @@ class TraceStreamTest {
     @Test
     void shouldFindARoot() {
         //Given
-        AggregatedTrace aggregatedTrace = AggregatedTrace.withInitial(buildRootLinkedSpan(), NodeTrace::getTraceId)
-                .include(buildRootChildrenLinkedSpan())
-                .include(buildSecondLevelChildrenLinkedSpan());
+        LinkedSpanList linkedSpanList = new LinkedSpanList();
+        linkedSpanList.include(buildRootLinkedSpan());
+        linkedSpanList.include(buildRootChildrenLinkedSpan());
+        linkedSpanList.include(buildSecondLevelChildrenLinkedSpan());
+
 
         //When
         Optional<LinkedSpan> rootLinkedSpanOpt =
-                aggregatedTrace.allTraces().filter(ls -> ls.parentId() == null).findFirst();
+                linkedSpanList.allTraces().filter(ls -> ls.getParentId() == null).findFirst();
 
         //Then
         assertThat(rootLinkedSpanOpt).isPresent().get()
@@ -41,12 +45,14 @@ class TraceStreamTest {
     @Test
     void shouldNotFindTraces() {
         //Given
-        AggregatedTrace aggregatedTrace = AggregatedTrace.withInitial(buildRootLinkedSpan(), NodeTrace::getTraceId)
-                .include(buildRootChildrenLinkedSpan())
-                .include(buildSecondLevelChildrenLinkedSpan());
+        LinkedSpanList linkedSpanList = new LinkedSpanList();
+        linkedSpanList.include(buildRootLinkedSpan());
+        linkedSpanList.include(buildRootChildrenLinkedSpan());
+        linkedSpanList.include(buildSecondLevelChildrenLinkedSpan());
+
 
         //When
-        Stream<LinkedSpan> linkedSpanStream = aggregatedTrace.unclassifiedTraces();
+        Stream<LinkedSpan> linkedSpanStream = linkedSpanList.unclassifiedTraces();
 
         //Then
         assertThat(linkedSpanStream).isEmpty();
@@ -59,51 +65,54 @@ class TraceStreamTest {
 
         List<NodeTrace> nodeTraces = generator.simulateSequentialHTTPCalls("servicea", "serviceb", "servicec");
 
-        //When
-        AggregatedTrace aggregatedTrace =
-                AggregatedTrace.withInitial(nodeTraces.remove(0), NodeTrace::getTraceId).include(nodeTraces);
+        LinkedSpanList linkedSpanList = new LinkedSpanList();
 
+        //When
+        LinkedSpanList spanList = linkedSpanList.include(
+                nodeTraces.stream().flatMap(l -> l.getSpans().stream().map(LinkedSpan::of)).collect(toList())
+        );
 
         //Then
-        assertThat(aggregatedTrace.httpTraces().filter(l -> l.localServiceName().equals("servicea")))
+        assertThat(spanList.httpTraces().filter(l -> l.getLocalServiceName().equals("servicea")))
                 .hasSize(2)
-                .extractingResultOf("kind").containsExactly(Span.Kind.SERVER, Span.Kind.CLIENT);
+                .extractingResultOf("getKind").containsExactly(Span.Kind.SERVER, Span.Kind.CLIENT);
 
-        assertThat(aggregatedTrace.httpTraces().filter(l -> l.localServiceName().equals("servicec")))
+        assertThat(spanList.httpTraces().filter(l -> l.getLocalServiceName().equals("servicec")))
                 .hasSize(1)
-                .extractingResultOf("kind").containsExactly(Span.Kind.SERVER);
+                .extractingResultOf("getKind").containsExactly(Span.Kind.SERVER);
 
-        LinkedSpan rootLinkedSpan = aggregatedTrace.httpTraces()
-                .filter(l -> l.kind().equals(Span.Kind.SERVER) && l.localServiceName().equals("servicea"))
+        LinkedSpan rootLinkedSpan = spanList.httpTraces()
+                .filter(l -> l.getKind().equals(Span.Kind.SERVER) && l.getLocalServiceName().equals("servicea"))
                 .findFirst().orElseThrow(() -> new RuntimeException("Root span should be present"));
 
         LinkedSpan rootChildLinkedSpan = rootLinkedSpan.nextServer();
         assertThat(rootChildLinkedSpan).isNotNull()
                 .extracting("localServiceName", "parentId", "traceId", "kind")
-                .containsExactly("serviceb", rootLinkedSpan.id(), rootLinkedSpan.traceId(), Span.Kind.SERVER);
+                .containsExactly("serviceb", rootLinkedSpan.getId(), rootLinkedSpan.getTraceId(), Span.Kind.SERVER);
 
-        assertThat(rootLinkedSpan.tags()).containsKeys("author", "version");
+        assertThat(rootLinkedSpan.getTags()).containsKeys("author", "version");
 
         assertThat(rootLinkedSpan.client()).isNotNull()
                 .extracting("localServiceName", "parentId", "traceId", "kind", "id")
                 .containsExactly(
-                        "servicea", rootLinkedSpan.id(), rootLinkedSpan.traceId(),
-                        Span.Kind.CLIENT, rootChildLinkedSpan.id()
+                        "servicea", rootLinkedSpan.getId(), rootLinkedSpan.getTraceId(),
+                        Span.Kind.CLIENT, rootChildLinkedSpan.getId()
                 );
 
     }
 
-    private NodeTrace buildRootLinkedSpan() {
+    private LinkedSpan buildRootLinkedSpan() {
         Span rootSpan = Span.newBuilder()
                 .traceId(traceId)
                 .id(traceId)
                 .localEndpoint(Endpoint.newBuilder().serviceName("serviceA").build())
                 .kind(Span.Kind.SERVER)
                 .build();
-        return NodeTrace.from(Collections.singletonList(rootSpan));
+
+        return LinkedSpan.of(rootSpan);
     }
 
-    private NodeTrace buildRootChildrenLinkedSpan() {
+    private LinkedSpan buildRootChildrenLinkedSpan() {
         Span firstLevelSpan = Span.newBuilder()
                 .traceId(traceId)
                 .parentId(traceId)
@@ -111,10 +120,10 @@ class TraceStreamTest {
                 .localEndpoint(Endpoint.newBuilder().serviceName("serviceB").build())
                 .kind(Span.Kind.SERVER)
                 .build();
-        return NodeTrace.from(Collections.singletonList(firstLevelSpan));
+        return LinkedSpan.of(firstLevelSpan);
     }
 
-    private NodeTrace buildSecondLevelChildrenLinkedSpan() {
+    private LinkedSpan buildSecondLevelChildrenLinkedSpan() {
         Span secondLevelSpan = Span.newBuilder()
                 .traceId(traceId)
                 .parentId("0000000000000002")
@@ -122,7 +131,7 @@ class TraceStreamTest {
                 .localEndpoint(Endpoint.newBuilder().serviceName("serviceC").build())
                 .kind(Span.Kind.SERVER)
                 .build();
-        return NodeTrace.from(Collections.singletonList(secondLevelSpan));
+        return LinkedSpan.of(secondLevelSpan);
     }
 
 }
