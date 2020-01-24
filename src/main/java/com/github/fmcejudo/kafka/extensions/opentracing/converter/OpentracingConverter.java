@@ -1,52 +1,47 @@
 package com.github.fmcejudo.kafka.extensions.opentracing.converter;
 
-import com.github.fmcejudo.kafka.extensions.opentracing.NodeTrace;
-import com.github.fmcejudo.kafka.extensions.opentracing.serialization.OpentracingDeserializer;
-import com.github.fmcejudo.kafka.extensions.opentracing.serialization.OpentracingSerializer;
 import org.springframework.lang.Nullable;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.converter.AbstractMessageConverter;
 import org.springframework.util.Assert;
 import org.springframework.util.MimeType;
+import zipkin2.Span;
+import zipkin2.SpanBytesDecoderDetector;
+
+import java.util.List;
 
 public class OpentracingConverter extends AbstractMessageConverter {
 
-    private final OpentracingDeserializer opentracingDeserializer;
-
-    private final OpentracingSerializer opentracingSerializer;
-
     public OpentracingConverter() {
         super(new MimeType("application", "opentracing"));
-        this.opentracingDeserializer = new OpentracingDeserializer();
-        this.opentracingSerializer = new OpentracingSerializer();
     }
 
     @Override
     protected boolean supports(Class<?> aClass) {
-        return aClass == NodeTrace.class;
+        return aClass == List.class;
     }
 
     @Override
-    protected Object convertFromInternal(Message<?> message, Class<?> targetClass, @Nullable Object conversionHint) {
-        if (targetClass != NodeTrace.class) {
+    protected List<Span> convertFromInternal(Message<?> message, Class<?> targetClass, @Nullable Object conversionHint) {
+        if (targetClass != List.class) {
             return null;
         }
         byte[] data = (byte[]) message.getPayload();
-        return opentracingDeserializer.deserialize(null, data);
+        return SpanBytesDecoderDetector.decoderForListMessage(data).decodeList(data);
     }
 
     @Override
     @Nullable
-    protected Object convertToInternal(
+    protected List<Span> convertToInternal(
             Object payload, @Nullable MessageHeaders headers, @Nullable Object conversionHint) {
 
         Assert.isTrue(
                 headers.get(MessageHeaders.CONTENT_TYPE).equals("application/opentracing"),
                 "application/opentracing contentType header is required"
         );
-        if (payload instanceof NodeTrace) {
-            return payload;
+        if (payload instanceof List) {
+            return (List<Span>) payload;
         }
         return null;
     }

@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class TraceStreamTest {
@@ -63,14 +63,12 @@ class TraceStreamTest {
         //Given
         NodeTraceGenerator generator = NodeTraceGenerator.generator();
 
-        List<NodeTrace> nodeTraces = generator.simulateSequentialHTTPCalls("servicea", "serviceb", "servicec");
+        List<Span> spans = generator.simulateSequentialHTTPCalls("servicea", "serviceb", "servicec");
 
         LinkedSpanList linkedSpanList = new LinkedSpanList();
 
         //When
-        LinkedSpanList spanList = linkedSpanList.include(
-                nodeTraces.stream().flatMap(l -> l.getSpans().stream().map(LinkedSpan::of)).collect(toList())
-        );
+        LinkedSpanList spanList = linkedSpanList.include(spans.stream().map(LinkedSpan::of).collect(toList()));
 
         //Then
         assertThat(spanList.httpTraces().filter(l -> l.getLocalServiceName().equals("servicea")))

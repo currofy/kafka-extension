@@ -1,6 +1,5 @@
 package com.github.fmcejudo.kafka.extensions.opentracing.serialization;
 
-import com.github.fmcejudo.kafka.extensions.opentracing.NodeTrace;
 import lombok.SneakyThrows;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -10,7 +9,7 @@ import zipkin2.SpanBytesDecoderDetector;
 import java.util.List;
 import java.util.Map;
 
-public class OpentracingDeserializer implements Deserializer<NodeTrace> {
+public class OpentracingDeserializer implements Deserializer<List<Span>> {
 
     private final StringDeserializer stringDeserializer;
 
@@ -25,9 +24,8 @@ public class OpentracingDeserializer implements Deserializer<NodeTrace> {
 
     @Override
     @SneakyThrows
-    public NodeTrace deserialize(String topic, byte[] data) {
-        List<Span> spanList = decodeSpans(data);
-        return NodeTrace.from(spanList);
+    public List<Span> deserialize(String topic, byte[] data) {
+        return decodeSpans(data);
     }
 
     private List<Span> decodeSpans(final byte[] data) {

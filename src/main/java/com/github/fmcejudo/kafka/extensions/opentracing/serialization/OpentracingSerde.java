@@ -1,13 +1,14 @@
 package com.github.fmcejudo.kafka.extensions.opentracing.serialization;
 
-import com.github.fmcejudo.kafka.extensions.opentracing.NodeTrace;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serializer;
+import zipkin2.Span;
 
+import java.util.List;
 import java.util.Map;
 
-public class OpentracingSerde implements Serde<NodeTrace> {
+public class OpentracingSerde implements Serde<List<Span>> {
 
     private final OpentracingSerializer opentracingSerializer;
     private final OpentracingDeserializer opentracingDeserializer;
@@ -23,12 +24,12 @@ public class OpentracingSerde implements Serde<NodeTrace> {
     }
 
     @Override
-    public Serializer<NodeTrace> serializer() {
+    public Serializer<List<Span>> serializer() {
         return opentracingSerializer;
     }
 
     @Override
-    public Deserializer<NodeTrace> deserializer() {
+    public Deserializer<List<Span>> deserializer() {
         return opentracingDeserializer;
     }
 

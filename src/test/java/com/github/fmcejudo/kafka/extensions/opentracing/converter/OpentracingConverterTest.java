@@ -1,6 +1,6 @@
 package com.github.fmcejudo.kafka.extensions.opentracing.converter;
 
-import com.github.fmcejudo.kafka.extensions.opentracing.NodeTrace;
+
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,6 +13,7 @@ import zipkin2.Span;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static java.util.Collections.singletonMap;
@@ -35,7 +36,7 @@ class OpentracingConverterTest {
     void shouldSupportOnlyTraces() {
 
         assertThat(opentracingConverter.supports(String.class)).isFalse();
-        assertThat(opentracingConverter.supports(NodeTrace.class)).isTrue();
+        assertThat(opentracingConverter.supports(List.class)).isTrue();
     }
 
     @Test
@@ -48,14 +49,12 @@ class OpentracingConverterTest {
         Message<?> message = MessageBuilder.createMessage(spanBytes, new MessageHeaders(Collections.emptyMap()));
 
         //When
-        Object trace = opentracingConverter.convertFromInternal(message, NodeTrace.class, null);
+        List<Span> spanList = opentracingConverter.convertFromInternal(message, List.class, null);
 
         //Then
-        assertThat(trace).isInstanceOf(NodeTrace.class);
-        assertThat((NodeTrace) trace)
-                .isNotNull()
-                .extracting("traceId").isEqualTo("46876d22cf0f94e0");
-        assertThat(((NodeTrace) trace).getSpans()).hasSize(2);
+        assertThat(spanList).isInstanceOf(List.class);
+        assertThat(spanList).isNotNull().hasSize(2);
+
     }
 
     @Test
@@ -72,14 +71,14 @@ class OpentracingConverterTest {
                 .duration(4583L)
                 .name("my_service").build();
         //When
-        Object o = opentracingConverter.convertToInternal(
-                NodeTrace.from(Collections.singletonList(span)),
+        List<Span> spans = opentracingConverter.convertToInternal(
+                Collections.singletonList(span),
                 new MessageHeaders(singletonMap(CONTENT_TYPE, "application/opentracing")),
                 null
         );
 
         //Then
-        assertThat(o).isInstanceOf(NodeTrace.class);
+        assertThat(spans).isInstanceOf(List.class).hasSize(1);
     }
 
 }

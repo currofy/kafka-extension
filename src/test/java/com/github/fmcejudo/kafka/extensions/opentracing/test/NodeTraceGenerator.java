@@ -1,12 +1,12 @@
 package com.github.fmcejudo.kafka.extensions.opentracing.test;
 
-import com.github.fmcejudo.kafka.extensions.opentracing.NodeTrace;
 import net.andreinc.mockneat.MockNeat;
 import net.andreinc.mockneat.unit.regex.Regex;
 import zipkin2.Endpoint;
 import zipkin2.Span;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -29,7 +29,7 @@ public class NodeTraceGenerator {
         return new NodeTraceGenerator();
     }
 
-    public List<NodeTrace> simulateSequentialHTTPCalls(final String... services) {
+    public List<Span> simulateSequentialHTTPCalls(final String... services) {
         if (services.length == 0) {
             throw new RuntimeException("No services to request");
         }
@@ -50,11 +50,7 @@ public class NodeTraceGenerator {
             aux = children;
         }
 
-        return logsInNodeMap.values().stream().map(this::buildNodeTrace).collect(toList());
-    }
-
-    public List<NodeTrace> simulateUnclassifiedCalls() {
-        return null;
+        return logsInNodeMap.values().stream().flatMap(Collection::stream).collect(toList());
     }
 
 
@@ -65,7 +61,7 @@ public class NodeTraceGenerator {
 
     private Span generateServerSpan(final String traceId, final String parentId, final String serviceName) {
         Regex idPattern = mockNeat.regex("[0-9a-f]{16}");
-        return generateSpanCommon(traceId, idPattern.val(),parentId, serviceName).kind(SERVER).build();
+        return generateSpanCommon(traceId, idPattern.val(), parentId, serviceName).kind(SERVER).build();
     }
 
     private Span generateClientSpan(final Span span, final String serviceName) {
@@ -84,9 +80,6 @@ public class NodeTraceGenerator {
                 .localEndpoint(Endpoint.newBuilder().serviceName(serviceName).build());
     }
 
-    private NodeTrace buildNodeTrace(final List<Span> spans) {
-        return NodeTrace.from(spans);
-    }
 
     private void addSpanToNode(Map<String, ArrayList<Span>> logsInNodeMap, Span rootSpan) {
         logsInNodeMap.computeIfPresent(rootSpan.localServiceName(), (key, list) -> {

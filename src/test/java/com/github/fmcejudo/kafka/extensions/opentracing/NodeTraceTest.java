@@ -4,9 +4,11 @@ import com.github.fmcejudo.kafka.extensions.opentracing.serialization.Opentracin
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import zipkin2.Span;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,10 +33,10 @@ class NodeTraceTest {
         byte[] spanBytes = IOUtils.toByteArray(inputStream);
 
         //When
-        NodeTrace nodeTrace = opentracingDeserializer.deserialize(null, spanBytes);
+        List<Span> spans = opentracingDeserializer.deserialize(null, spanBytes);
 
         //Then
-        assertThat(nodeTrace.containsRoot()).isTrue();
+        assertThat(spans).isNotEmpty();
 
     }
 

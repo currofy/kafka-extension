@@ -1,7 +1,6 @@
 package com.github.fmcejudo.kafka.extensions.group.serialization;
 
 import com.github.fmcejudo.kafka.extensions.group.LinkedSpanList;
-import com.github.fmcejudo.kafka.extensions.opentracing.NodeTrace;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serializer;
