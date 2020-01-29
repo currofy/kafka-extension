@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class OpentracingSerializer implements Serializer<List<Span>> {
+class TraceSerializer implements Serializer<List<Span>> {
 
     private static final Map<String, SpanBytesEncoder> BYTES_ENCODER_MAP;
 
@@ -32,7 +32,7 @@ public class OpentracingSerializer implements Serializer<List<Span>> {
         bytesEncoder = SpanBytesEncoder.JSON_V2;
     }
 
-    public OpentracingSerializer() {
+    public TraceSerializer() {
         this.stringSerializer = new StringSerializer();
     }
 

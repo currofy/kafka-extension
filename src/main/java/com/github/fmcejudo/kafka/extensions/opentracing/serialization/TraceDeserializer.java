@@ -9,11 +9,11 @@ import zipkin2.SpanBytesDecoderDetector;
 import java.util.List;
 import java.util.Map;
 
-public class OpentracingDeserializer implements Deserializer<List<Span>> {
+class TraceDeserializer implements Deserializer<List<Span>> {
 
     private final StringDeserializer stringDeserializer;
 
-    public OpentracingDeserializer() {
+    public TraceDeserializer() {
         this.stringDeserializer = new StringDeserializer();
     }
 

@@ -1,6 +1,6 @@
 package com.github.fmcejudo.kafka.extensions.opentracing.serialization;
 
-import com.github.fmcejudo.kafka.extensions.opentracing.test.NodeTraceGenerator;
+import com.github.fmcejudo.kafka.extensions.opentracing.test.TraceGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import zipkin2.Endpoint;
@@ -12,15 +12,15 @@ import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class OpenTracingSerializerTest {
+class TraceSerializerTest {
 
     private final String topic = "mytopic";
 
-    OpentracingSerializer opentracingSerializer;
+    TraceSerializer traceSerializer;
 
     @BeforeEach
     void setUp() {
-        opentracingSerializer = new OpentracingSerializer();
+        traceSerializer = new TraceSerializer();
     }
 
     @Test
@@ -40,7 +40,7 @@ class OpenTracingSerializerTest {
 
 
         //When
-        byte[] json2ZipkinSpan = opentracingSerializer.serialize(topic, Collections.singletonList(span));
+        byte[] json2ZipkinSpan = traceSerializer.serialize(topic, Collections.singletonList(span));
 
         //Then
         assertThat(new String(json2ZipkinSpan))
@@ -55,30 +55,30 @@ class OpenTracingSerializerTest {
     @Test
     void shouldSelectAnEncoder() {
         //Given
-        Span rootSpan = NodeTraceGenerator.generator().generateRootSpan("serviceA");
-        assertThat(opentracingSerializer.bytesEncoder).isEqualTo(SpanBytesEncoder.JSON_V2);
+        Span rootSpan = TraceGenerator.generator().generateRootSpan("serviceA");
+        assertThat(traceSerializer.bytesEncoder).isEqualTo(SpanBytesEncoder.JSON_V2);
 
         //When
-        opentracingSerializer.configure(Collections.singletonMap("span.encoder", "json_v1"), false);
+        traceSerializer.configure(Collections.singletonMap("span.encoder", "json_v1"), false);
         //Then
-        assertThat(opentracingSerializer.bytesEncoder).isEqualTo(SpanBytesEncoder.JSON_V1);
-        byte[] serialize = opentracingSerializer.serialize(null, Collections.singletonList(rootSpan));
+        assertThat(traceSerializer.bytesEncoder).isEqualTo(SpanBytesEncoder.JSON_V1);
+        byte[] serialize = traceSerializer.serialize(null, Collections.singletonList(rootSpan));
         System.out.println(new String(serialize, StandardCharsets.UTF_8));
 
         //When
-        opentracingSerializer.configure(Collections.singletonMap("span.encoder", "thrift"), false);
+        traceSerializer.configure(Collections.singletonMap("span.encoder", "thrift"), false);
         //Then
-        assertThat(opentracingSerializer.bytesEncoder).isEqualTo(SpanBytesEncoder.THRIFT);
+        assertThat(traceSerializer.bytesEncoder).isEqualTo(SpanBytesEncoder.THRIFT);
 
         //When
-        opentracingSerializer.configure(Collections.singletonMap("span.encoder", "proto3"), false);
+        traceSerializer.configure(Collections.singletonMap("span.encoder", "proto3"), false);
         //Then
-        assertThat(opentracingSerializer.bytesEncoder).isEqualTo(SpanBytesEncoder.PROTO3);
+        assertThat(traceSerializer.bytesEncoder).isEqualTo(SpanBytesEncoder.PROTO3);
 
         //When
-        opentracingSerializer.configure(Collections.singletonMap("span.encoder", "invalid"), false);
+        traceSerializer.configure(Collections.singletonMap("span.encoder", "invalid"), false);
         //Then
-        assertThat(opentracingSerializer.bytesEncoder).isEqualTo(SpanBytesEncoder.JSON_V2);
+        assertThat(traceSerializer.bytesEncoder).isEqualTo(SpanBytesEncoder.JSON_V2);
     }
 
 }

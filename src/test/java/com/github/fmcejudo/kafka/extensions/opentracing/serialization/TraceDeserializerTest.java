@@ -13,25 +13,24 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class OpentracingDeserializerTest {
-
-    private final String sampleTopic = "mytopic";
+class TraceDeserializerTest {
 
     ClassLoader classLoader;
 
-    OpentracingDeserializer openTracingDeserializer;
+    TraceDeserializer openTracingDeserializer;
 
 
     @BeforeEach
     void setUp() {
         this.classLoader = getClass().getClassLoader();
-        this.openTracingDeserializer = new OpentracingDeserializer();
+        this.openTracingDeserializer = new TraceDeserializer();
     }
 
     @Test
     @SneakyThrows
     void shouldDeserializeAOpenTracingStringIntoASpan() {
         //Given
+        String sampleTopic = "mytopic";
         InputStream inputStream = Optional.ofNullable(classLoader.getResourceAsStream("span-zipkin-sample.json"))
                 .orElseThrow(() -> new RuntimeException("It could not read resource to load span"));
 

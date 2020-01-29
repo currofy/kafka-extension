@@ -16,17 +16,17 @@ import static java.util.stream.Collectors.toList;
 import static zipkin2.Span.Kind.CLIENT;
 import static zipkin2.Span.Kind.SERVER;
 
-public class NodeTraceGenerator {
+public class TraceGenerator {
 
 
     private MockNeat mockNeat;
 
-    private NodeTraceGenerator() {
+    private TraceGenerator() {
         mockNeat = MockNeat.threadLocal();
     }
 
-    public static NodeTraceGenerator generator() {
-        return new NodeTraceGenerator();
+    public static TraceGenerator generator() {
+        return new TraceGenerator();
     }
 
     public List<Span> simulateSequentialHTTPCalls(final String... services) {

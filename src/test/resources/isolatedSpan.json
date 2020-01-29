@@ -1,0 +1,17 @@
+{
+  "traceId": "46876d22cf0f94e0",
+  "parentId": "46876d22cf0f94e0",
+  "id": "b8d201046fe8a637",
+  "kind": "CLIENT",
+  "name": "get",
+  "timestamp": 1579277594098067,
+  "duration": 157486,
+  "localEndpoint": {
+    "serviceName": "zipkin-sample",
+    "ipv4": "172.21.0.1"
+  },
+  "tags": {
+    "http.method": "GET",
+    "http.path": "/city/Madrid"
+  }
+}

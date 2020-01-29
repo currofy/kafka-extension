@@ -5,13 +5,7 @@ import org.apache.kafka.common.serialization.Deserializer;
 import zipkin2.Span;
 import zipkin2.codec.SpanBytesDecoder;
 
-import java.util.Map;
-
-public class SpanDeserializer implements Deserializer<Span> {
-
-    @Override
-    public void configure(Map<String, ?> configs, boolean isKey) {
-    }
+class SpanDeserializer implements Deserializer<Span> {
 
     @Override
     public Span deserialize(String topic, byte[] data) {
@@ -23,8 +17,4 @@ public class SpanDeserializer implements Deserializer<Span> {
         return deserialize(topic, data);
     }
 
-    @Override
-    public void close() {
-
-    }
 }
