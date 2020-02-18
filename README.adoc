@@ -1,3 +1,6 @@
+image:https://travis-ci.com/currofy/kafka-extension.svg?branch=master["Build Status", link="https://travis-ci.com/currofy/kafka-extension"]
+
+
 = KAFKA-EXTENSION
 
 == WHAT IS THIS PROJECT ABOUT
