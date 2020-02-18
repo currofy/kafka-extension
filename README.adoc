@@ -58,7 +58,7 @@ rather creating a new one.
 
 In our particular case, the `Span` doesn't meet with those requirements to convert into a json object, so we have implemented our own.
 
-`com.github.fmcejudo.kafka.extensions.opentracing.serialization.OpentracingSerde`
+`com.currofy.kafka.extensions.opentracing.serialization.OpentracingSerde`
 
 With the message read from topic and given the type of `content-type` as `application/opentracing` it will deserialize the
 messages as `NodeTrace` which is a bunch of `Zipkin Span` and the common `traceId` which all the spans should have.
@@ -75,7 +75,7 @@ when the events are emitted we can have them all to reconstruct the followed pat
 
 This work to have the linked spans is an aggregator, which gets the spans and link them to follow that path.
 
-`com.github.fmcejudo.kafka.extensions.group.aggregator.NodeTraceAggregator`
+`com.currofy.kafka.extensions.group.aggregator.NodeTraceAggregator`
 
 The result will be a `LinkedSpanList` containing all the `LinkedSpan` and from which we can get the root or initial `Span`
 ( the one without `parentId` ). This `LinkedSpan` does not contain now all the information in the `Zipkin Span`, but something
@@ -106,7 +106,7 @@ if it is used in a Spring project with Spring-Cloud:
 [source,xml]
 ----
     <dependency>
-        <groupId>com.github.fmcejudo.kafka.extensions</groupId>
+        <groupId>com.currofy.kafka.extensions</groupId>
         <artifactId>kafka-extension</artifactId>
         <version>1.0-SNAPSHOT</version>
     </dependency>
@@ -147,7 +147,7 @@ spring:
               consumer:
                 application-id: metrics_in-1
                 key-serde: org.apache.kafka.common.serialization.Serdes$StringSerde
-                value-serde: com.github.fmcejudo.kafka.extensions.opentracing.serialization.OpentracingSerde
+                value-serde: com.currofy.kafka.extensions.opentracing.serialization.OpentracingSerde
 
 ----
 
