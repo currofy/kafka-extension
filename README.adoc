@@ -1,5 +1,6 @@
-image:https://travis-ci.org/currofy/kafka-extension.svg?branch=master["Build Status", link="https://travis-ci.org/currofy/kafka-extension"]
-
+image:https://travis-ci.org/currofy/kafka-extension.svg?branch=master["Build Status", link="https://travis-ci.org/currofy/kafka-extension"] 
+image:https://img.shields.io/gitter/room/currofy/remote-dev?label=chat&logo=gitter&color=orange[gitter] 
+image:https://img.shields.io/badge/PRs-welcome-green.svg?style=flat-square[link="CONTRIBUTING.md"]
 
 = KAFKA-EXTENSION
 
@@ -229,3 +230,7 @@ I know some of this functionality is going to be deprecated, such as the `Stream
 
 Also, I am using as example `@StreamListener` which is discouraged to be used by Pivotal, in favour of functional programming with
 interfaces `Supplier`, `Function` and `Consumer`.
+
+
+[gitter]: https://gitter.im/currofy/kafka-extension
+[gitter-img]: https://img.shields.io/gitter/room/currofy/remote-dev?label=hablamos&logo=gitter
