@@ -18,7 +18,7 @@
         <opentracing-api.version>0.33.0</opentracing-api.version>
         <kafka.version>2.4.0</kafka.version>
         <assertj-core.version>3.14.0</assertj-core.version>
-        <commons-io.version>2.6</commons-io.version>
+        <commons-io.version>2.7</commons-io.version>
         <lombok.version>1.18.10</lombok.version>
         <zipkin.version>2.19.2</zipkin.version>
         <junit-jupiter.version>5.5.2</junit-jupiter.version>
